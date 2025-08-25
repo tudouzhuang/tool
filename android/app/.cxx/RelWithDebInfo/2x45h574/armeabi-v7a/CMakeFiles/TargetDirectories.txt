@@ -1,0 +1,2 @@
+C:/Users/Hp/StudioProjects/toolkit/android/app/.cxx/RelWithDebInfo/2x45h574/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/Hp/StudioProjects/toolkit/android/app/.cxx/RelWithDebInfo/2x45h574/armeabi-v7a/CMakeFiles/rebuild_cache.dir

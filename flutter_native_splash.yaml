@@ -1,0 +1,57 @@
+flutter_native_splash:
+  # Set solid background color
+  color: "#225D66"
+  color_dark: "#225D66"
+
+  # Remove main image and use branding for better control
+  # image: assets/images/toolkit_icon.png  # Comment out main image
+
+#  # Use branding image for precise positioning
+#  branding: assets/images/toolkit_icon.png  # Better positioning control
+#  branding_mode: center  # Options: center, bottom
+#  branding_bottom_padding: 100  # Distance from bottom (if using bottom mode)
+#
+#  # Dark mode branding
+#  branding_dark: assets/images/toolkit_icon.png
+#  branding_ios: assets/images/toolkit_icon.png
+#  branding_android: assets/images/toolkit_icon.png
+
+  # Android 12+ specific configurations
+  android_12:
+    image: assets/images/toolkit_icon.png   # Display the same image for Android 12+
+    color: "#225D66"  # Background color for Android 12+
+    image_dark: assets/images/toolkit_icon.png  # Use the same image for dark mode on Android 12+
+    color_dark: "#225D66"  # Same background color for dark mode on Android 12+
+
+  # Platform-specific configurations
+  color_android: "#225D66"  # Background color for standard Android
+  color_dark_android: "#225D66"  # Dark mode background color for Android
+  color_ios: "#225D66"  # Background color for iOS
+  color_dark_ios: "#225D66"  # Dark mode background color for iOS
+
+  # OPTIMIZED: Image positioning and sizing for best display
+  android_gravity: center  # Center the image on Android
+  ios_content_mode: scaleAspectFit  # Scale to fit while maintaining aspect ratio on iOS
+  web_image_mode: contain  # Contain the entire image within the screen on web
+
+  # Image size configuration (recommended: 288x288 for optimal display)
+  # Make sure your image is properly sized - ideally 288x288px or 512x512px
+
+  # Branding image positioning (optional - adds a smaller logo)
+  branding: assets/images/toolkit_icon.png  # Optional: smaller branding image
+  branding_mode: bottom  # Position branding at bottom
+  branding_ios: assets/images/toolkit_icon.png
+  branding_android: assets/images/toolkit_icon.png
+
+  # Advanced positioning (if you want to fine-tune)
+  # Note: These work with branding images, not the main splash image
+  branding_bottom_padding: 24  # Add padding from bottom edge
+
+  # Set screen orientation on Android
+  android_screen_orientation: portrait  # Portrait mode for Android
+
+  # Enable fullscreen splash on Android and iOS
+  fullscreen: true
+
+  # iOS-specific settings
+  ios: true  # Enable splash screen for iOS
