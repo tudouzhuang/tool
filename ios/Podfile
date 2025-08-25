@@ -1,10 +1,10 @@
-# 1. 指定最新的插件仓库源，防止因本地缓存过旧而找不到插件。
+# 1. 指定插件仓库源，防止找不到插件
 source 'https://cdn.cocoapods.org/'
 
-# 2. 设置 App 支持的最低 iOS 版本，以满足所有插件的要求。
-platform :ios, '15.5'
+# 2. 指定最低 iOS 平台版本，以满足 Firebase 等插件的要求
+platform :ios, '14.0'
 
-# 这是一个标准的 Flutter 设置，用于禁用统计数据。
+# 这是一个标准的 Flutter 设置，用于禁用统计数据
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
@@ -13,6 +13,7 @@ project 'Runner', {
   'Release' => :release,
 }
 
+# --- 核心修复：下面这部分代码定义了 Flutter 的辅助函数 ---
 def flutter_root
   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
   unless File.exist?(generated_xcode_build_settings_path)
@@ -26,22 +27,23 @@ def flutter_root
   raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try running flutter pub get followed by pod install."
 end
 
+# 这行 require 语句就是解决问题的关键，它“导入”了 flutter_post_install 等方法
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+# --- 修复结束 ---
 
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # 3. 核心部分：加载您 Flutter 项目中 pubspec.yaml 里定义的所有插件。
+  # 加载 Flutter 项目的所有插件
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
 post_install do |installer|
+  # 现在这行代码可以被正确识别了
   flutter_post_install(installer)
   
-  # 4. 【重要保险措施】
-  # 您的构建机器是 Mac mini M2，这是苹果 M 系列芯片。
-  # 这段代码可以防止在 M 芯片电脑上编译时，因为 arm64 架构冲突而导致的常见编译失败问题。
+  # 解决 M1/M2 芯片构建模拟器时的架构冲突问题
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
