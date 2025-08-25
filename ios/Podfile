@@ -1,8 +1,8 @@
 # 1. 指定插件仓库源，防止找不到插件
 source 'https://cdn.cocoapods.org/'
 
-# 2. 指定最低 iOS 平台版本，以满足 Firebase 等插件的要求
-platform :ios, '16.0'
+# 2. 指定最低 iOS 平台版本为 15.0，以满足所有现代插件的要求
+platform :ios, '15.0'
 
 # 这是一个标准的 Flutter 设置，用于禁用统计数据
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -13,7 +13,7 @@ project 'Runner', {
   'Release' => :release,
 }
 
-# --- 核心修复：下面这部分代码定义了 Flutter 的辅助函数 ---
+# --- 这部分代码定义了 Flutter 的辅助函数，必须存在 ---
 def flutter_root
   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
   unless File.exist?(generated_xcode_build_settings_path)
@@ -27,9 +27,9 @@ def flutter_root
   raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try running flutter pub get followed by pod install."
 end
 
-# 这行 require 语句就是解决问题的关键，它“导入”了 flutter_post_install 等方法
+# 这行 require 语句是解决问题的关键，它“导入”了 flutter_post_install 等方法
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
-# --- 修复结束 ---
+# --- 结束 ---
 
 target 'Runner' do
   use_frameworks!
@@ -43,7 +43,7 @@ post_install do |installer|
   # 现在这行代码可以被正确识别了
   flutter_post_install(installer)
   
-  # 解决 M1/M2 芯片构建模拟器时的架构冲突问题
+  # 解决 M1/M2/M3 芯片构建模拟器时的架构冲突问题
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
