@@ -2,7 +2,7 @@
 source 'https://cdn.cocoapods.org/'
 
 # 2. 指定最低 iOS 平台版本为 15.0，以满足所有现代插件的要求
-platform :ios, '15.0'
+platform :ios, '16.0'
 
 # 这是一个标准的 Flutter 设置，用于禁用统计数据
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
