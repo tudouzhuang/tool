@@ -40,12 +40,7 @@ target 'Runner' do
 end
 
 post_install do |installer|
-  flutter_post_install(installer)
-  
-  # 解决 M系列 芯片构建模拟器时的架构冲突问题
   installer.pods_project.targets.each do |target|
-    target.build_configurations.each do |config|
-      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
-    end
+    flutter_additional_ios_build_settings(target)
   end
 end
