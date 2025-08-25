@@ -1,49 +1,29 @@
-# 定义工作流
 workflows:
-    # 这是你的iOS构建工作流的名字，可以自定义
-    flutter-ios-workflow:
-      name: Flutter iOS Build
-      
-      # 设定构建超时时间为60分钟，以防某些步骤耗时过长
-      max_build_duration: 60
-      
-      # 指定使用苹果M2芯片的Mac mini作为构建机，性能更好
-      instance_type: mac_mini_m2
-      
-      # 定义构建环境，固定Xcode和CocoaPods版本以保证稳定性
-      environment:
-        xcode: latest # 总是使用最新的稳定版Xcode
-        cocoapods: default # 使用默认的稳定版CocoaPods
-        flutter: stable # 明确使用Flutter的stable渠道
-  
-      # 脚本部分，按顺序执行构建命令
-      scripts:
-        - name: Get Flutter packages
-          script: |
-            # 获取所有Dart依赖包
-            flutter pub get
-        
-        - name: Install CocoaPods dependencies
-          script: |
-            # 这是一个关键步骤，可以解决99%的iOS依赖问题
-            # 1. 进入ios目录
-            # 2. 运行 pod install --repo-update
-            #    --repo-update 会强制更新本地的插件信息库，避免找不到插件的错误
-            set -e # 如果命令失败则立即停止
-            cd ios
-            pod install --repo-update
-  
-        - name: Build iOS App
-          script: |
-            # 执行Flutter的iOS构建命令
-            # --release 表示构建发布版
-            # --no-codesign 允许在没有苹果开发者证书的情况下完成构建（用于测试流程）
-            flutter build ios --release --no-codesign
-            
-      # 构建产物设置，告诉Codemagic构建成功后需要保存哪些文件
-      artifacts:
-        # 保存打包好的 .ipa 文件，这是最终的应用安装包
-        - build/ios/ipa/*.ipa
-        # 保存 .app 文件和调试符号 .dSYM 文件，用于后续分析
-        - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
-        - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+  flutter-ios-workflow:
+    name: Flutter iOS Build (IPA Release)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    
+    scripts:
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+
+      - name: Install CocoaPods dependencies
+        script: |
+          set -e
+          cd ios
+          pod install --repo-update
+
+      - name: Build iOS IPA
+        script: |
+          # --- 核心改动：使用 'flutter build ipa' 命令 ---
+          flutter build ipa --release --no-codesign
+          
+    # --- 关键修复：只保留最重要、最正确的产物路径 ---
+    artifacts:
+      - build/ios/ipa/*.ipa
