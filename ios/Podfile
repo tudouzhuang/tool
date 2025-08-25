@@ -27,7 +27,7 @@ def flutter_root
   raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try running flutter pub get followed by pod install."
 end
 
-# 这行 require 语句是解决问题的关键，它“导入”了 flutter_post_install 等方法
+# 这行 require 语句是解决"undefined method"错误的关键
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 # --- 结束 ---
 
@@ -40,10 +40,9 @@ target 'Runner' do
 end
 
 post_install do |installer|
-  # 现在这行代码可以被正确识别了
   flutter_post_install(installer)
   
-  # 解决 M1/M2/M3 芯片构建模拟器时的架构冲突问题
+  # 解决 M系列 芯片构建模拟器时的架构冲突问题
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
