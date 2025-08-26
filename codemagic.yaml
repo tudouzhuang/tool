@@ -1,6 +1,6 @@
 workflows:
   flutter-ios-workflow:
-    name: Flutter iOS Build (IPA Release)
+    name: Flutter iOS Build (Manual IPA Export)
     max_build_duration: 60
     instance_type: mac_mini_m2
     environment:
@@ -19,11 +19,22 @@ workflows:
           cd ios
           pod install --repo-update
 
-      - name: Build iOS IPA
+      - name: Build and Export IPA
         script: |
-          # --- 核心改动：使用 'flutter build ipa' 命令 ---
+          set -e # 确保命令失败时立即停止
+
+          # 1. 先运行 archive 命令，生成 .xcarchive 文件
+          echo "--- Archiving the app ---"
           flutter build ipa --release --no-codesign
+
+          # 2. 手动从 .xcarchive 文件导出 .ipa 文件
+          echo "--- Manually exporting the IPA ---"
+          xcodebuild -archivePath build/ios/archive/Runner.xcarchive \
+                     -exportPath build/ios/ipa \
+                     -exportOptionsPlist ios/ExportOptions.plist \
+                     -allowProvisioningUpdates
           
-    # --- 关键修复：只保留最重要、最正确的产物路径 ---
+          echo "--- IPA export finished ---"
+          
     artifacts:
       - build/ios/ipa/*.ipa
