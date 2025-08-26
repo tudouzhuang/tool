@@ -2,20 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <!-- 核心修复：
+        1. 使用苹果推荐的、新的 'release-testing' 方法。
+        2. 彻底删除了所有与签名相关的 key (teamID, signingStyle, provisioningProfiles)，
+           明确告诉 xcodebuild 我们不需要任何签名。
+    -->
     <key>method</key>
-    <string>ad-hoc</string>
-    <key>signingStyle</key>
-    <string>manual</string>
+    <string>release-testing</string>
     <key>stripSwiftSymbols</key>
     <true/>
-    <key>teamID</key>
-    <string></string>
     <key>compileBitcode</key>
     <false/>
-    <key>provisioningProfiles</key>
-    <dict>
-        <key>com.scanmaster.toolkit.app</key>
-        <string></string>
-    </dict>
 </dict>
 </plist>
