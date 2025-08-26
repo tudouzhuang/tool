@@ -1,6 +1,6 @@
 workflows:
   flutter-ios-workflow:
-    name: Flutter iOS Build (Final Export)
+    name: Flutter iOS Build (Definitive Manual Export)
     max_build_duration: 60
     instance_type: mac_mini_m2
     environment:
@@ -19,24 +19,31 @@ workflows:
           cd ios
           pod install --repo-update
 
-      - name: Build and Export IPA
+      - name: Build Archive and Export IPA
         script: |
           set -e
 
-          # 1. 归档应用
-          echo "--- Archiving the app ---"
-          flutter build ipa --release --no-codesign
+          # --- 核心修复：我们现在完全手动控制构建过程 ---
 
-          # 2. 手动导出 IPA
-          echo "--- Manually exporting the IPA ---"
-          # --- 核心修复：在第一行添加了 -exportArchive 标志 ---
+          # 1. 手动归档 (Archive)
+          #    我们使用 xcodebuild archive 命令，并明确禁用代码签名。
+          #    这会创建一个结构完整、但未签名的 .xcarchive 文件。
+          echo "--- Manually archiving the app without signing ---"
+          xcodebuild archive -workspace ios/Runner.xcworkspace \
+                         -scheme Runner \
+                         -configuration Release \
+                         -archivePath build/ios/archive/Runner.xcarchive \
+                         CODE_SIGN_IDENTITY="" \
+                         CODE_SIGNING_REQUIRED=NO
+
+          # 2. 手动从我们刚刚创建的、干净的归档文件中导出 IPA
+          echo "--- Manually exporting the IPA from the clean archive ---"
           xcodebuild -exportArchive \
                      -archivePath build/ios/archive/Runner.xcarchive \
                      -exportPath build/ios/ipa \
-                     -exportOptionsPlist ios/ExportOptions.plist \
-                     -allowProvisioningUpdates
+                     -exportOptionsPlist ios/ExportOptions.plist
           
-          echo "--- IPA export finished ---"
+          echo "--- IPA export finished successfully ---"
           
     artifacts:
       - build/ios/ipa/*.ipa
